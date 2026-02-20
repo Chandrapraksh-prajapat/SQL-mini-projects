@@ -37,3 +37,41 @@ INSERT INTO issue_records VALUES
 (1,1,101,'2025-01-10','2025-01-20'),
 (2,2,102,'2025-01-12',NULL),
 (3,1,103,'2025-01-15',NULL);
+
+
+-- TASK 1 – Show all issued books with student name
+
+SELECT s.name, b.title, i.issue_date 
+    FROM issue_records i
+      JOIN students s ON i.student_id = s.student_id
+          JOIN books b ON i.book_id = b.book_id;
+
+-- TASK 2 – Student who issued more than 1 book
+
+SELECT s.name, COUNT(*) AS total_books
+  FROM issue_records i
+    JOIN students s ON i.student_id = s.student_id
+      GROUP BY s.name
+        HAVING COUNT(*) > 1;
+
+-- TASK 3 – Pending returns
+
+SELECT * FROM issue_records
+  WHERE return_date IS NULL;
+
+-- TASK 4 – Books issued by each student
+
+SELECT s.name, COUNT(i.book_id) AS books_issued
+  FROM issue_records i
+    JOIN students s ON i.student_id = s.student_id
+        GROUP BY s.name;
+
+
+-- TASK 5 – Overdue books (return_date is NULL and issued before 2025-01-14)
+
+SELECT s.name, b.title, i.issue_date
+  FROM issue_records i
+    JOIN students s ON i.student_id = s.student_id
+      JOIN books b ON i.book_id = b.book_id
+        WHERE i.return_date IS NULL
+            AND i.issue_date < '2025-01-14';
